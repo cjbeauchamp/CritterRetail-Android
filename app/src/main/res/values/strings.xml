@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Critter Retail</string>
+
+    <string name="title_section1">Shop</string>
+    <string name="title_section2">Cart</string>
+
+    <string name="hello_world">Hello world!</string>
+
+    <string name="action_settings">Settings</string>
+</resources>
