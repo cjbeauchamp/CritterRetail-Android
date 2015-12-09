@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
+
 public class ShippingActivity extends AppCompatActivity {
 
     private TextView mZipcode;
@@ -16,6 +18,8 @@ public class ShippingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shipping);
+
+        Crittercism.leaveBreadcrumb("ShippingViewDisplayed");
 
         mZipcode = (TextView) this.findViewById(R.id.shipping_zip);
 
@@ -57,6 +61,10 @@ public class ShippingActivity extends AppCompatActivity {
 
                         // invalid server response
                         else if(statusCode == 600) {
+                            Crittercism.failTransaction("checkout");
+                            message = "Server error, unable to parse response";
+                        } else {
+                            Crittercism.failTransaction("checkout");
                             message = "Server error, unable to parse response";
                         }
 

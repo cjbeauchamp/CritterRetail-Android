@@ -86,6 +86,8 @@ public class ShopFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_shop, container, false);
 
+        Crittercism.leaveBreadcrumb("ShopViewDisplayed");
+
         mDbHelper = new DatabaseHelper(getActivity().getApplicationContext());
 
         mWebView = (WebView) rootView.findViewById(R.id.shop_webview);

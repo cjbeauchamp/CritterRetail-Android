@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crittercism.app.Crittercism;
+
 public class BillingActivity extends AppCompatActivity {
 
     private DatabaseHelper mDbHelper;
@@ -51,6 +53,8 @@ public class BillingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_billing);
 
+        Crittercism.leaveBreadcrumb("CheckoutViewDisplayed");
+
         mDbHelper = new DatabaseHelper(this.getApplicationContext());
 
         this.reloadPrices();
@@ -76,6 +80,7 @@ public class BillingActivity extends AppCompatActivity {
                         // show a toast
                         Toast.makeText(BillingActivity.this, "Purchase Complete!", Toast.LENGTH_LONG).show();
 
+                        Crittercism.endTransaction("checkout");
 
                         // pop the activities
                         Intent intent = new Intent(BillingActivity.this, MainActivity.class);
@@ -93,6 +98,7 @@ public class BillingActivity extends AppCompatActivity {
 
                         // invalid server response
                         else {
+                            Crittercism.failTransaction("checkout");
                             new android.app.AlertDialog.Builder(BillingActivity.this)
                                     .setTitle("Error!")
                                     .setMessage("Unable to parse server response")

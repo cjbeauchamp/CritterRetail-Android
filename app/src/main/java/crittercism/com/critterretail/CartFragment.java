@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
+
 import java.io.InputStream;
 
 /**
@@ -33,6 +35,7 @@ public class CartFragment extends Fragment {
     private View mRootView;
     private TextView mTotalPrice;
     DatabaseHelper mDbHelper;
+    private int mCartTotal;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -74,6 +77,7 @@ public class CartFragment extends Fragment {
         double cnt =  cursor.getDouble(0);
         cursor.close();
 
+        mCartTotal = (int) Math.round(cnt*100);
 
         mTotalPrice.setText(String.format("$%.2f", cnt));
     }
@@ -89,6 +93,9 @@ public class CartFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Crittercism.leaveBreadcrumb("CartViewDisplayed");
+
         mRootView = inflater.inflate(R.layout.fragment_cart, container, false);
         final CartFragment mThis = this;
 
@@ -104,6 +111,10 @@ public class CartFragment extends Fragment {
         checkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Crittercism.beginTransaction("checkout");
+                Crittercism.setTransactionValue("checkout", mCartTotal);
+
                 Intent intent = new Intent(mRootView.getContext(), ShippingActivity.class);
                 startActivity(intent);
             }
@@ -116,7 +127,6 @@ public class CartFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 System.out.println("Clicked: " + position);
 
-                //Ask the user if they want to quit
                 new AlertDialog.Builder(mRootView.getContext())
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Delete?")
