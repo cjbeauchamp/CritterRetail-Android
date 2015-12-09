@@ -3,6 +3,7 @@ package crittercism.com.critterretail;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -72,7 +74,8 @@ public class CartFragment extends Fragment {
         double cnt =  cursor.getDouble(0);
         cursor.close();
 
-        mTotalPrice.setText("$" + String.valueOf(cnt));
+
+        mTotalPrice.setText(String.format("$%.2f", cnt));
     }
 
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -96,6 +99,15 @@ public class CartFragment extends Fragment {
         mListView.addFooterView(footerView);
 
         mTotalPrice = (TextView) mRootView.findViewById(R.id.footer_price);
+
+        Button checkout = (Button) mRootView.findViewById(R.id.checkout_button);
+        checkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mRootView.getContext(), ShippingActivity.class);
+                startActivity(intent);
+            }
+        });
 
         this.reloadCart();
 
