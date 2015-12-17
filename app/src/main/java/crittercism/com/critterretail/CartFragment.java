@@ -219,7 +219,7 @@ public class CartFragment extends Fragment {
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
-                e.printStackTrace();
+                Crittercism.logHandledException(e);
             }
             return mIcon11;
         }

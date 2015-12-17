@@ -53,7 +53,6 @@ public class ShopFragment extends Fragment {
             try {
                 productID = data.getInt("productID");
 
-
                 SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
                 // Create a new map of values, where column names are the keys
@@ -67,15 +66,13 @@ public class ShopFragment extends Fragment {
 
                 // Insert the new row, returning the primary key value of the new row
                 long newRowId = db.insert(DatabaseHelper.CartEntry.TABLE_NAME, null, values);
-                System.out.println("Inserted row id: " + Long.toString(newRowId));
 
-                System.out.println("Product added to cart: " + Integer.toString(productID));
                 Crittercism.leaveBreadcrumb("Product added to cart: " + Integer.toString(productID));
                 Toast.makeText(getActivity().getApplicationContext(), "Item Added to Cart!", Toast.LENGTH_LONG).show();
 
             } catch (Exception e) {
                 Toast.makeText(getActivity().getApplicationContext(), "Error adding item", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
+                Crittercism.logHandledException(e);
             }
 
         }
@@ -122,7 +119,7 @@ public class ShopFragment extends Fragment {
                         JSONObject json = new JSONObject(jsonString);
                         handleRequest(command, json);
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Crittercism.logHandledException(e);
                     }
 
                     return true;

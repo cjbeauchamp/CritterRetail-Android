@@ -2,6 +2,8 @@ package crittercism.com.critterretail;
 
 import android.os.AsyncTask;
 
+import com.crittercism.app.Crittercism;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -31,8 +33,10 @@ class APIRequest extends AsyncTask<String, String, String> {
 
         } catch (IOException e) {
             mError = e.getLocalizedMessage();
+            Crittercism.logHandledException(e);
         } catch (Exception e) {
             mError = e.getLocalizedMessage();
+            Crittercism.logHandledException(e);
         }
         return responseString;
     }
