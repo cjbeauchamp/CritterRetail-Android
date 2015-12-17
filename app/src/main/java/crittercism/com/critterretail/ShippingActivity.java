@@ -17,35 +17,51 @@ public class ShippingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shipping);
 
+        // make note of current state
         Crittercism.leaveBreadcrumb("ShippingViewDisplayed");
 
+        // set up our UI
+        setContentView(R.layout.activity_shipping);
         mZipcode = (TextView) this.findViewById(R.id.shipping_zip);
-
         Button continueButton = (Button) this.findViewById(R.id.shipping_continue);
+
+
+        // when the user continues
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                // we're about to make an API call so show a UI loader
                 final ProgressDialog mDialog = new ProgressDialog(ShippingActivity.this);
-                mDialog.setMessage("Submitting Form...");
+                mDialog.setMessage("Verifying Details");
                 mDialog.setCancelable(false);
                 mDialog.setIndeterminate(true);
                 mDialog.show();
 
+                // make an API request to the 'confirmPayment' endpoint
                 new APIRequest(new APIResponse() {
                     @Override
                     public void success() {
+
+                        // hide the loading dialog
                         mDialog.hide();
 
+                        // show the billing activity
                         Intent intent = new Intent(ShippingActivity.this, BillingActivity.class);
                         startActivity(intent);
                     }
+
+                    /* NOTE:
+                     To try different status codes, enter the desired status code in the zip field
+                      */
                     @Override
                     public void failure(String error, int statusCode) {
+
+                        // hide the loading dialog
                         mDialog.hide();
 
+                        // the message for our dialog
                         String message = "Uh oh! Something bad happened!";
 
                         // invalid payment info
@@ -56,14 +72,17 @@ public class ShippingActivity extends AppCompatActivity {
                         // failed txn on server
                         else if(statusCode == 500) {
                             message = "Transaction failed due to server error!";
-                            throw new RuntimeException("Uncaught exception - unable to parse JSON.");
+                            throw new RuntimeException("Uncaught exception: unable to parse JSON.");
                         }
 
                         // invalid server response
                         else if(statusCode == 600) {
                             Crittercism.failTransaction("checkout");
                             message = "Server error, unable to parse response";
-                        } else {
+                        }
+
+                        // any other server response
+                        else {
                             Crittercism.failTransaction("checkout");
                             message = "Server error, unable to parse response";
                         }
@@ -75,7 +94,8 @@ public class ShippingActivity extends AppCompatActivity {
                                 .setPositiveButton("OK", null)
                                 .show();
 
-                        System.out.println("Request finished with error: " + error + " and code: " + statusCode);
+                        System.out.println("Request finished with error: " + error +
+                                " and code: " + statusCode);
                     }
                 }).execute("confirmPayment/"+mZipcode.getText());
 

@@ -19,13 +19,10 @@ import com.crittercism.app.Crittercism;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by chrisbeauchamp on 11/28/15.
- */
 public class ShopFragment extends Fragment {
 
     private WebView mWebView;
-    DatabaseHelper mDbHelper;
+    private DatabaseHelper mDbHelper;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -41,37 +38,50 @@ public class ShopFragment extends Fragment {
     public ShopFragment() {
     }
 
-
+    /* Handle commands sent via webview requests */
     private void handleRequest(String command, JSONObject data) {
 
         System.out.println("Making app request: " + command + " with data: " + data.toString());
 
+        // if the command requested adding item to the cart
         if (command.equalsIgnoreCase("addtocart")) {
 
             int productID = 0;
 
             try {
+
+                // pull the product id from the JSON
                 productID = data.getInt("productID");
 
+                // get a database instance to write to
                 SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-                // Create a new map of values, where column names are the keys
+                // Create a new map of values
                 ContentValues values = new ContentValues();
                 values.put(DatabaseHelper.CartEntry.COLUMN_NAME_PRODUCT_ID, productID);
-                values.put(DatabaseHelper.CartEntry.COLUMN_NAME_PRODUCT_NAME, data.getString("name"));
-                values.put(DatabaseHelper.CartEntry.COLUMN_NAME_PRODUCT_PRICE, data.getDouble("price"));
-                values.put(DatabaseHelper.CartEntry.COLUMN_NAME_PRODUCT_DESCRIPTION, data.getString("description"));
+                values.put(DatabaseHelper.CartEntry.COLUMN_NAME_PRODUCT_NAME,
+                        data.getString("name"));
+                values.put(DatabaseHelper.CartEntry.COLUMN_NAME_PRODUCT_PRICE,
+                        data.getDouble("price"));
+                values.put(DatabaseHelper.CartEntry.COLUMN_NAME_PRODUCT_DESCRIPTION,
+                        data.getString("description"));
                 values.put(DatabaseHelper.CartEntry.COLUMN_NAME_IMAGE_URL, data.getString("image"));
                 values.put(DatabaseHelper.CartEntry.COLUMN_NAME_QUANTITY, 1);
 
                 // Insert the new row, returning the primary key value of the new row
                 long newRowId = db.insert(DatabaseHelper.CartEntry.TABLE_NAME, null, values);
 
-                Crittercism.leaveBreadcrumb("Product added to cart: " + Integer.toString(productID));
-                Toast.makeText(getActivity().getApplicationContext(), "Item Added to Cart!", Toast.LENGTH_LONG).show();
+                // leave a breadcrumb for any issues down the line
+                Crittercism.leaveBreadcrumb("Product added to cart: "+Integer.toString(productID));
+
+                // tell the user we were successful
+                Toast.makeText(getActivity().getApplicationContext(), "Item Added to Cart!",
+                        Toast.LENGTH_LONG).show();
 
             } catch (Exception e) {
-                Toast.makeText(getActivity().getApplicationContext(), "Error adding item", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), "Error adding item",
+                        Toast.LENGTH_LONG).show();
+
                 Crittercism.logHandledException(e);
             }
 
@@ -85,13 +95,15 @@ public class ShopFragment extends Fragment {
 
         Crittercism.leaveBreadcrumb("ShopViewDisplayed");
 
+        // initialize our class variables
         mDbHelper = new DatabaseHelper(getActivity().getApplicationContext());
-
         mWebView = (WebView) rootView.findViewById(R.id.shop_webview);
 
+        // make sure JS is turned on in our webview
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
 
+        // override the 'back' button to go back in the webview when appropriate
         mWebView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -103,19 +115,26 @@ public class ShopFragment extends Fragment {
             }
         });
 
-        mWebView.loadUrl("http://10.0.3.2:8000/");
+        // load our site on view create
+        mWebView.loadUrl(APIRequest.BASE_URL);
 
-
-
+        // listen for custom URL schemes
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+                // Example request apprequest://addtocart#{'itemID':1}
                 if (url.startsWith("apprequest://")) {
                     Uri uri = Uri.parse(url);
+
+                    // example host == apprequest
                     String command = uri.getHost();
+
+                    // example fragment == {'itemID':1}
                     String jsonString = uri.getFragment();
 
                     try {
+                        // parse the fragment and handle the full request
                         JSONObject json = new JSONObject(jsonString);
                         handleRequest(command, json);
                     } catch (JSONException e) {

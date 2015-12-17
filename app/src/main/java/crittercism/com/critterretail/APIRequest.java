@@ -10,6 +10,8 @@ import java.net.URL;
 
 class APIRequest extends AsyncTask<String, String, String> {
 
+    public static String BASE_URL = "http://10.0.3.2:8000/";
+
     private String mError = null;
     private APIResponse mAPIResponse;
     private int mStatusCode = 0;
@@ -22,7 +24,7 @@ class APIRequest extends AsyncTask<String, String, String> {
     protected String doInBackground(String... path) {
         String responseString = null;
         try {
-            URL url = new URL("http://10.0.3.2:8000/api/" + path[0]);
+            URL url = new URL(BASE_URL + "api/" + path[0]);
             System.out.println("Requesting URL: " + url.toString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             mStatusCode = conn.getResponseCode();
@@ -51,3 +53,5 @@ class APIRequest extends AsyncTask<String, String, String> {
         }
     }
 }
+
+
