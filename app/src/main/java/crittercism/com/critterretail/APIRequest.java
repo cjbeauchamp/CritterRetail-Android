@@ -10,7 +10,7 @@ import java.net.URL;
 
 class APIRequest extends AsyncTask<String, String, String> {
 
-    public static String BASE_URL = "http://10.0.3.2:8000/";
+    public static String BASE_URL = "http://critterretail.herokuapp.com/";
 
     private String mError = null;
     private APIResponse mAPIResponse;
