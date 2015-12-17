@@ -91,6 +91,25 @@ public class ShopFragment extends Fragment {
         mDbHelper = new DatabaseHelper(getActivity().getApplicationContext());
 
         mWebView = (WebView) rootView.findViewById(R.id.shop_webview);
+
+        WebSettings webSettings = mWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+
+        mWebView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && mWebView.canGoBack()) {
+                    mWebView.goBack();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        mWebView.loadUrl("http://10.0.3.2:8000/");
+
+
+
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -106,21 +125,6 @@ public class ShopFragment extends Fragment {
                         e.printStackTrace();
                     }
 
-                    return true;
-                }
-                return false;
-            }
-        });
-        WebSettings webSettings = mWebView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-
-        mWebView.loadUrl("http://10.0.3.2:8000/");
-
-        mWebView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK && mWebView.canGoBack()) {
-                    mWebView.goBack();
                     return true;
                 }
                 return false;
