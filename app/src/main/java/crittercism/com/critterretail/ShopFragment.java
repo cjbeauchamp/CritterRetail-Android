@@ -2,21 +2,18 @@ package crittercism.com.critterretail;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.crittercism.app.Crittercism;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ShopFragment extends Fragment {
@@ -97,11 +94,8 @@ public class ShopFragment extends Fragment {
 
         // initialize our class variables
         mDbHelper = new DatabaseHelper(getActivity().getApplicationContext());
-        mWebView = (WebView) rootView.findViewById(R.id.shop_webview);
 
-        // make sure JS is turned on in our webview
-        WebSettings webSettings = mWebView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
+        /* Placeholder 1 */
 
         // override the 'back' button to go back in the webview when appropriate
         mWebView.setOnKeyListener(new View.OnKeyListener() {
@@ -116,35 +110,11 @@ public class ShopFragment extends Fragment {
         });
 
         // load our site on view create
-        mWebView.loadUrl(APIRequest.BASE_URL);
+        /* Placeholder 2 */
 
         // listen for custom URL schemes
         mWebView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-
-                // Example request apprequest://addtocart#{'itemID':1}
-                if (url.startsWith("apprequest://")) {
-                    Uri uri = Uri.parse(url);
-
-                    // example host == apprequest
-                    String command = uri.getHost();
-
-                    // example fragment == {'itemID':1}
-                    String jsonString = uri.getFragment();
-
-                    try {
-                        // parse the fragment and handle the full request
-                        JSONObject json = new JSONObject(jsonString);
-                        handleRequest(command, json);
-                    } catch (JSONException e) {
-                        Crittercism.logHandledException(e);
-                    }
-
-                    return true;
-                }
-                return false;
-            }
+            /* Placeholder 3 */
         });
 
 
